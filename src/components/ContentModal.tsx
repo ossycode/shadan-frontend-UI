@@ -439,40 +439,6 @@ interface ContentModalProps {
   allPosts?: Post[];
 }
 
-// const sampleInternalMessages: Message[] = [
-//   {
-//     id: "1",
-//     text: "Please review the content before posting",
-//     sender: "Team Lead",
-//     timestamp: "10:30 AM",
-//     isUser: false,
-//   },
-//   {
-//     id: "2",
-//     text: "Will update the caption accordingly",
-//     sender: "You",
-//     timestamp: "10:35 AM",
-//     isUser: true,
-//   },
-// ];
-
-// const sampleClientMessages: Message[] = [
-//   {
-//     id: "1",
-//     text: "The banner looks great! Can we adjust the timing?",
-//     sender: "Client",
-//     timestamp: "09:15 AM",
-//     isUser: false,
-//   },
-//   {
-//     id: "2",
-//     text: "Of course! What time would work better?",
-//     sender: "You",
-//     timestamp: "09:20 AM",
-//     isUser: true,
-//   },
-// ];
-
 const ContentModal = ({
   isOpen,
   onClose,
@@ -602,6 +568,7 @@ const ContentModal = ({
 
     onSubmit(formData);
     setIsDirty(false);
+    onClose();
   };
 
   const handleSendMessage = () => {
@@ -726,6 +693,13 @@ const ContentModal = ({
               <Button variant="outline" size="sm" className="h-8">
                 <Copy />
                 Post Organically
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                className="ml-2 bg-blue-700"
+                size="sm"
+              >
+                {editingPost ? "Update Post" : "Create Post"}
               </Button>
               <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                 <MoreVertical className="w-4 h-4" />
