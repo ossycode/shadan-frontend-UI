@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Post } from "@/types/post";
 import ContentModal from "./ContentModal";
+import { PlatformIcon } from "./platformSvg";
 
 // Interface for props to receive data from parent
 interface TableViewProps {
@@ -88,11 +89,8 @@ const TableView = ({
   };
 
   const getPlatformIcons = (platforms: string[]) => {
-    return platforms.map((platform) => (
-      <span
-        key={platform}
-        className="inline-block w-2 h-2 rounded-full bg-blue-500 mr-1"
-      ></span>
+    return platforms.map((p, index) => (
+      <PlatformIcon key={index} platform={p} className="w-4 h-4" />
     ));
   };
 
