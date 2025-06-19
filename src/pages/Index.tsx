@@ -7,7 +7,12 @@ import TableView from "@/components/TableView";
 import Inbox from "./Inbox";
 import { Post } from "@/types/post";
 import PreviewView from "@/components/PreviewView";
-import { saveColumns, seedColumnsIfEmpty } from "@/lib/utils";
+import {
+  groupByDateKeyIntoColumns,
+  saveColumns,
+  seedColumnsIfEmpty,
+} from "@/lib/utils";
+import { format, formatISO, parse, parseISO } from "date-fns";
 
 // Initial data structure for columns
 const initialColumns: Column[] = [
@@ -278,6 +283,40 @@ const Index = () => {
     }))
   );
 
+  const onPostsReorder = (
+    postId: string,
+    source: { droppableId: string; index: number },
+    destination: { droppableId: string; index: number }
+  ) => {
+    setColumns((cols) => {
+      // Flatten all posts and attach dateKey = column id
+      let all = cols.flatMap((col) =>
+        col.posts.map((p) => ({ ...p, dateKey: col.id }))
+      );
+
+      // Find the post being moved
+      const moving = all.find((p) => p.id === postId)!;
+      all = all.filter((p) => p.id !== postId);
+
+      const parsedDate = parse(
+        destination.droppableId,
+        "yyyy-MM-dd",
+        new Date()
+      );
+
+      moving.date = format(parsedDate, "MMMM d, yyyy");
+      moving.dateKey = formatISO(parsedDate, { representation: "date" });
+
+      const before = all.filter((p) => p.dateKey === moving.dateKey);
+      const after = all.filter((p) => p.dateKey !== moving.dateKey);
+      before.splice(destination.index, 0, moving);
+
+      const newCols = groupByDateKeyIntoColumns([...after, ...before]);
+      saveColumns(newCols);
+      return newCols;
+    });
+  };
+
   if (currentPage === "inbox") {
     console.log("Rendering Inbox component");
     return <Inbox onNavigate={handleSidebarNavigation} />;
@@ -313,7 +352,10 @@ const Index = () => {
             />
           )}
           {activeTab === "Calendar" && (
-            <CalendarView posts={columns.flatMap((col) => col.posts)} />
+            <CalendarView
+              posts={columns.flatMap((col) => col.posts)}
+              onPostsReorder={onPostsReorder}
+            />
           )}
           {activeTab === "Table" && (
             <TableView

@@ -126,45 +126,6 @@ const KanbanBoard = ({
     setIsModalOpen(true);
   };
 
-  //   if (editingPost) {
-  //     const updatedColumns = columns.map((col) => ({
-  //       ...col,
-  //       posts: col.posts.map((post) =>
-  //         post.id === editingPost.id ? { ...post, ...formData } : post
-  //       ),
-  //     }));
-  //     onColumnsChange(updatedColumns);
-  //   } else {
-  //     // Create new post
-  //     const newPost: Post = {
-  //       id: formData.id || `post-${Date.now()}`,
-  //       title: formData.title || "Post a Banner",
-  //       description:
-  //         formData.description || "Create a marketing banner for the campaign",
-  //       date: formData.date || "October 25, 2023",
-  //       time: formData.time || "7:00 AM - 25 July",
-  //       platforms: formData.platforms || ["tiktok", "instagram", "facebook"],
-  //       image:
-  //         formData.image ||
-  //         "/lovable-uploads/6cc9ce2f-f1e2-40fe-aeaf-c8c9332f7f84.png",
-  //       author: formData.author || "John Doe",
-  //       likes: formData.likes || 0,
-  //       notes: formData.notes || "",
-  //     };
-
-  //     const updatedColumns = columns.map((col) =>
-  //       col.id === triggerColumnId
-  //         ? {
-  //             ...col,
-  //             posts: [...col.posts, newPost],
-  //             count: col.posts.length + 1,
-  //           }
-  //         : col
-  //     );
-  //     onColumnsChange(updatedColumns);
-  //   }
-  //   handleModalClose();
-  // };
   const handleModalSubmit = (formData: Partial<Post>) => {
     onPostSubmit({
       ...formData,

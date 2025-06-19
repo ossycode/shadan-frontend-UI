@@ -1,11 +1,37 @@
 import { Column } from "@/components/KanbanBoard";
+import { Post } from "@/types/post";
 import { clsx, type ClassValue } from "clsx";
+import { format, isValid, parseISO } from "date-fns";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export type PostWithDateKey = Post & { dateKey: string };
+
+export function groupByDateKeyIntoColumns(
+  posts: (Post & { dateKey: string })[]
+): Column[] {
+  // group into a map
+  const map: Record<string, Post[]> = {};
+  for (const p of posts) {
+    (map[p.dateKey] ||= []).push(p);
+  }
+
+  return Object.entries(map)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([dateKey, group]) => {
+      const iso = parseISO(dateKey);
+      const title = isValid(iso) ? format(iso, "MMM d") : dateKey; // fall back if somehow bad
+      return {
+        id: dateKey,
+        title,
+        count: group.length,
+        posts: group,
+      };
+    });
+}
 const STORAGE_KEY = "kanban-columns";
 
 export const loadColumns = (): Column[] | null => {
