@@ -200,7 +200,7 @@ const KanbanBoard = ({
                     <h3 className="font-medium text-gray-900">
                       {column.title}
                     </h3>
-                    <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">
+                    <span className="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded-full font-semibold">
                       {column.count}
                     </span>
                   </div>
