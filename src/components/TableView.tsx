@@ -15,6 +15,7 @@ import {
 import { Post } from "@/types/post";
 import ContentModal from "./ContentModal";
 import { PlatformIcon } from "./platformSvg";
+import { format, parse, parseISO } from "date-fns";
 
 // Interface for props to receive data from parent
 interface TableViewProps {
@@ -179,9 +180,43 @@ const TableView = ({
                         {post.title}
                       </span>
                     </td>
+
                     <td className="py-2 px-2 align-top">
-                      <div className="text-sm text-gray-900">{post.date}</div>
-                      <div className="text-sm text-gray-500">{post.time}</div>
+                      {(() => {
+                        // 1) parse the date
+                        const dateOnly = parse(
+                          post.date.trim(),
+                          "MMMM d, yyyy",
+                          new Date()
+                        );
+                        if (isNaN(dateOnly.getTime())) {
+                          return <span className="text-sm">-</span>;
+                        }
+
+                        const m = post.time
+                          .trim()
+                          .match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+                        if (!m) {
+                          return <span className="text-sm ">-</span>;
+                        }
+                        const [, h, min, ampm] = m;
+                        let hh = +h % 12;
+                        if (ampm.toUpperCase() === "PM") hh += 12;
+
+                        // 3) set on the date
+                        dateOnly.setHours(hh, +min);
+
+                        return (
+                          <div className="flex gap-5">
+                            <div className="text-sm ">
+                              {format(dateOnly, "dd/M/yyyy")}
+                            </div>
+                            <div className="text-sm">
+                              {format(dateOnly, "hh:mma").toLowerCase()}
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </td>
                     <td className="py-2 px-2 align-top whitespace-normal max-w-[300px]">
                       <div className="text-sm text-gray-900">
