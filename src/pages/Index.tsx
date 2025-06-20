@@ -288,30 +288,22 @@ const Index = () => {
     source: { droppableId: string; index: number },
     destination: { droppableId: string; index: number }
   ) => {
-    setColumns((cols) => {
-      // Flatten all posts and attach dateKey = column id
-      let all = cols.flatMap((col) =>
-        col.posts.map((p) => ({ ...p, dateKey: col.id }))
-      );
+    setColumns((prevCols) => {
+      const newCols = prevCols.map((col) => {
+        const posts = col.posts.map((post) => {
+          if (post.id !== postId) return post;
 
-      // Find the post being moved
-      const moving = all.find((p) => p.id === postId)!;
-      all = all.filter((p) => p.id !== postId);
+          // Update the date field only
+          const newDate = format(
+            parse(destination.droppableId, "yyyy-MM-dd", new Date()),
+            "MMMM d, yyyy"
+          );
+          return { ...post, date: newDate };
+        });
 
-      const parsedDate = parse(
-        destination.droppableId,
-        "yyyy-MM-dd",
-        new Date()
-      );
+        return { ...col, posts };
+      });
 
-      moving.date = format(parsedDate, "MMMM d, yyyy");
-      moving.dateKey = formatISO(parsedDate, { representation: "date" });
-
-      const before = all.filter((p) => p.dateKey === moving.dateKey);
-      const after = all.filter((p) => p.dateKey !== moving.dateKey);
-      before.splice(destination.index, 0, moving);
-
-      const newCols = groupByDateKeyIntoColumns([...after, ...before]);
       saveColumns(newCols);
       return newCols;
     });
